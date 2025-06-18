@@ -4,6 +4,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	NodeOperationError,
+	NodeConnectionType,
 } from 'n8n-workflow';
 
 import { createClient } from 'redis';
@@ -19,8 +20,8 @@ export class RedisCollector implements INodeType {
 		defaults: {
 			name: 'Redis Collector',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionType.Main],
+		outputs: [NodeConnectionType.Main],
 		properties: [
 			{
 				displayName: 'Thread ID',
@@ -111,9 +112,10 @@ export class RedisCollector implements INodeType {
 					await client.disconnect();
 				}
 			} catch (error) {
+				const errorMessage = error instanceof Error ? error.message : String(error);
 				throw new NodeOperationError(
 					this.getNode(),
-					`Redis Collector failed: ${error.message}`,
+					`Redis Collector failed: ${errorMessage}`,
 					{ itemIndex: i }
 				);
 			}
