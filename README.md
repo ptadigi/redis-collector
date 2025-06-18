@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # n8n-nodes-redis-collector
 
 Một custom node cho n8n để thu thập và tổng hợp tin nhắn từ Redis.
@@ -195,3 +196,6 @@ gomtin/
 ## License
 
 MIT
+=======
+# redis-collector
+>>>>>>> e94f711d8ecc05cccd2fcdeedb8688f584c16243
