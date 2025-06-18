@@ -22,6 +22,12 @@ export class RedisCollector implements INodeType {
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
+		credentials: [
+			{
+				name: 'redis',
+				required: true,
+			},
+		],
 		properties: [
 			{
 				displayName: 'Thread ID',
@@ -33,21 +39,13 @@ export class RedisCollector implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Redis Host',
-				name: 'host',
+				displayName: 'Content',
+				name: 'content',
 				type: 'string',
-				default: 'localhost',
-				placeholder: 'localhost',
-				description: 'Redis server hostname',
-				required: true,
-			},
-			{
-				displayName: 'Redis Port',
-				name: 'port',
-				type: 'number',
-				default: 6379,
-				description: 'Redis server port',
-				required: true,
+				default: '',
+				placeholder: 'Enter content to process',
+				description: 'Content to be processed with Redis messages',
+				required: false,
 			},
 			{
 				displayName: 'Wait Time (seconds)',
@@ -68,12 +66,17 @@ export class RedisCollector implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const threadId = this.getNodeParameter('threadId', i) as string;
-				const host = this.getNodeParameter('host', i) as string;
-				const port = this.getNodeParameter('port', i) as number;
+				const content = this.getNodeParameter('content', i) as string;
 				const waitTime = this.getNodeParameter('waitTime', i) as number;
 
 				if (!threadId) {
 					throw new NodeOperationError(this.getNode(), 'Thread ID is required');
+				}
+
+				// Get Redis credentials
+				const credentials = await this.getCredentials('redis');
+				if (!credentials) {
+					throw new NodeOperationError(this.getNode(), 'Redis credentials are required');
 				}
 
 				// Wait for the specified time
@@ -82,9 +85,11 @@ export class RedisCollector implements INodeType {
 				// Connect to Redis
 				const client = createClient({
 					socket: {
-						host,
-						port,
+						host: credentials.host as string,
+						port: credentials.port as number,
 					},
+					username: credentials.username as string,
+					password: credentials.password as string,
 				});
 
 				await client.connect();
@@ -94,7 +99,7 @@ export class RedisCollector implements INodeType {
 					const messages = await client.lRange(threadId, 0, -1);
 					
 					// Aggregate messages
-					const content = messages.join('\n');
+					const collectedContent = messages.join('\n');
 
 					// Delete the Redis key after collection
 					await client.del(threadId);
@@ -103,9 +108,11 @@ export class RedisCollector implements INodeType {
 					returnData.push({
 						json: {
 							threadId,
-							content,
+							inputContent: content,
+							collectedMessages: collectedContent,
 							messageCount: messages.length,
 							collectedAt: new Date().toISOString(),
+							messages: messages,
 						},
 					});
 				} finally {
