@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#DC382D" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Redis logo elements -->
+  <ellipse cx="32" cy="20" rx="18" ry="6" fill="#fff"/>
+  <ellipse cx="32" cy="26" rx="18" ry="6" fill="#fff" opacity="0.8"/>
+  <ellipse cx="32" cy="32" rx="18" ry="6" fill="#fff" opacity="0.6"/>
+  <ellipse cx="32" cy="38" rx="18" ry="6" fill="#fff" opacity="0.4"/>
+  <ellipse cx="32" cy="44" rx="18" ry="6" fill="#fff" opacity="0.2"/>
+  
+  <!-- Collection arrow -->
+  <path d="M52 32 L58 32 M55 29 L58 32 L55 35" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Small data dots -->
+  <circle cx="25" cy="20" r="1.5" fill="#DC382D"/>
+  <circle cx="32" cy="20" r="1.5" fill="#DC382D"/>
+  <circle cx="39" cy="20" r="1.5" fill="#DC382D"/>
+</svg>
